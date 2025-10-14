@@ -1,0 +1,229 @@
+import java.io.*;
+import java.util.*;
+public class Pass {
+
+    static List<Symbol> symbolTable = new ArrayList<>();
+    static List<Literal> literalTable = new ArrayList<>();
+    static int LC = 98;
+
+    public static void main(String[] args) {
+        try {
+            // PASS 1
+            System.setIn(new FileInputStream("main.asm"));
+            System.setOut(new PrintStream(new FileOutputStream("intermediate.txt")));
+
+            Scanner sc = new Scanner(System.in);
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                handleAD(line);
+                handleIS(line);
+                handleDS(line);
+            }
+            sc.close();
+
+            // PASS 2
+            System.setIn(new FileInputStream("intermediate.txt"));
+            System.setOut(new PrintStream(new FileOutputStream("output_1.txt")));
+
+            sc = new Scanner(System.in);
+            while (sc.hasNextLine()) {
+                String line = sc.nextLine();
+                handleISPass2(line);
+            }
+            sc.close();
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    // ==================== PASS 2 ====================
+    private static void handleISPass2(String line) {
+        if (!line.contains("IS")) return;
+
+        String[] parts = line.split("\\s+");
+        for (int i = 0; i < 3 && i < parts.length; i++) {
+            String token = parts[i].replace("(", "").replace(")", "");
+            String[] r = token.split(",");
+
+            if (r[0].equalsIgnoreCase("S")) {
+                System.out.print(symbolTable.get(Integer.parseInt(r[1])).address + "\t");
+            } else if (r[0].equalsIgnoreCase("L")) {
+                System.out.print(literalTable.get(Integer.parseInt(r[1])).address + "\t");
+            } else {
+                System.out.print(r[1] + "\t");
+            }
+        }
+        System.out.println();
+    }
+
+    // ==================== DS HANDLER ====================
+    private static void handleDS(String line) {
+        Map<String, Integer> DS = Map.of("DC", 0, "DS", 1);
+        int type = -1;
+
+        for (String key : DS.keySet()) {
+            if (line.contains(key)) {
+                type = DS.get(key);
+                break;
+            }
+        }
+        if (type == -1) return;
+
+        LC++;
+        String label = line.split("\\s+")[0];
+
+        if (type == 1) { // DS
+            int value = Integer.parseInt(line.split("\\s+")[2]);
+            symbolTable.add(new Symbol(label, LC, 1));
+            System.out.printf("(S,%d) (DS,%d) (C,%d)\n", LC, type, value);
+            LC += value - 1;
+        } else { // DC
+            if (line.contains("=")) {
+                // DC with literal
+                String literalValue = line.substring(line.indexOf('=') + 2, line.lastIndexOf('\''));
+                literalTable.add(new Literal(literalValue, -1));
+                int litIndex = literalTable.size() - 1;
+
+                symbolTable.add(new Symbol(label, LC, 1));
+                System.out.printf("(S,%d) (DS,%d) (L,%d)\n", symbolTable.size() - 1, type, litIndex);
+            } else {
+                // DC with constant
+                String value = line.split("\\s+")[2];
+                symbolTable.add(new Symbol(label, LC, 1));
+                System.out.printf("(S,%d) (DS,%d) (C,%s)\n", LC, type, value);
+            }
+        }
+    }
+
+    // ==================== IS HANDLER ====================
+    private static void handleIS(String line) {
+        Map<String, Integer> IS = Map.ofEntries(
+                Map.entry("STOP", 0), Map.entry("ADD", 1), Map.entry("SUB", 2),
+                Map.entry("MULT", 3), Map.entry("MOVER", 4), Map.entry("MOVEM", 5),
+                Map.entry("COMP", 6), Map.entry("BC", 7), Map.entry("DIV", 8),
+                Map.entry("READ", 9), Map.entry("PRINT", 10)
+        );
+
+        int code = -1;
+        for (String key : IS.keySet()) {
+            if (line.contains(key)) {
+                code = IS.get(key);
+                break;
+            }
+        }
+        if (code == -1) return;
+
+        LC++;
+        String[] tokens = line.replace(",", " ").split("\\s+");
+        System.out.printf("(IS,%d) ", code);
+
+        for (int i = 1; i < tokens.length; i++) {
+            String token = tokens[i];
+
+            if (token.matches("AREG|BREG|CREG|DREG")) {
+                int regCode = switch (token) {
+                    case "AREG" -> 1;
+                    case "BREG" -> 2;
+                    case "CREG" -> 3;
+                    case "DREG" -> 4;
+                    default -> 0;
+                };
+                System.out.printf("(R,%d) ", regCode);
+            } else if (token.startsWith("=")) {
+                String value = token.substring(1).replaceAll("'", "");
+                literalTable.add(new Literal(value, -1));
+                System.out.printf("(L,%d) ", literalTable.size() - 1);
+            } else if (token.matches("\\d+")) {
+                System.out.printf("(C,%s) ", token);
+            } else if (!token.isEmpty()) {
+                int symIndex = findOrAddSymbol(token);
+                System.out.printf("(S,%d) ", symIndex);
+            }
+        }
+        System.out.println();
+    }
+
+    // ==================== AD HANDLER ====================
+    private static void handleAD(String line) {
+        Map<String, Integer> AD = Map.of(
+                "START", 0, "END", 1, "ORIGIN", 2, "EQU", 3, "LTORG", 4
+        );
+
+        int code = -1;
+        for (String key : AD.keySet()) {
+            if (line.contains(key)) {
+                code = AD.get(key);
+                break;
+            }
+        }
+
+        switch (code) {
+            case 0 -> { // START
+                LC = Integer.parseInt(line.split("\\s+").length > 1 ? line.split("\\s+")[1] : "98") - 1;
+                System.out.printf("(AD,%d) (C,%d)\n", code, LC + 1);
+            }
+            case 1 -> { // END
+                LC++;
+                assignLiterals();
+                System.out.printf("(AD,%d)\n", code);
+            }
+            case 2 -> { // ORIGIN
+                LC = Integer.parseInt(line.split("\\s+")[1]);
+                System.out.printf("(AD,%d) (C,%d)\n", code, LC);
+            }
+            case 3 -> { // EQU
+                String label = line.split("\\s+")[0];
+                int addr = Integer.parseInt(line.split("\\s+")[2]);
+                symbolTable.add(new Symbol(label, addr, 2));
+                System.out.printf("(S,%d) (AD,%d) (C,%d)\n", symbolTable.size() - 1, code, addr);
+            }
+            case 4 -> { // LTORG
+                LC++;
+                assignLiterals();
+                System.out.printf("(AD,%d)\n", code);
+            }
+        }
+    }
+
+    // ==================== HELPERS ====================
+    private static void assignLiterals() {
+        for (Literal lit : literalTable) {
+            if (lit.address == -1) {
+                lit.address = LC;
+                LC++;
+            }
+        }
+    }
+
+    private static int findOrAddSymbol(String label) {
+        for (int i = 0; i < symbolTable.size(); i++) {
+            if (symbolTable.get(i).label.equals(label)) return i;
+        }
+        symbolTable.add(new Symbol(label, -1, 0));
+        return symbolTable.size() - 1;
+    }
+}
+
+// ==================== SUPPORT CLASSES ====================
+class Symbol {
+    String label;
+    int address;
+    int type;
+
+    Symbol(String label, int address, int type) {
+        this.label = label;
+        this.address = address;
+        this.type = type;
+    }
+}
+
+class Literal {
+    String value;
+    int address;
+
+    Literal(String value, int address) {
+        this.value = value;
+        this.address = address;
+    }
+}

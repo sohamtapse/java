@@ -1,0 +1,98 @@
+import java.io.*;
+import java.util.*;
+
+public class Macro {
+
+    static class TypeDef {
+        String name;
+        int defIndex, argIndex;
+        TypeDef(String name, int defIndex, int argIndex) {
+            this.name = name;
+            this.defIndex = defIndex;
+            this.argIndex = argIndex;
+        }
+    }
+
+    static class Argument {
+        String name, value;
+        Argument(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    static List<TypeDef> macros = new ArrayList<>();
+    static List<String> macroBody = new ArrayList<>();
+    static List<Argument> arguments = new ArrayList<>();
+
+    public static void main(String[] commandArgs) {
+        try {
+            System.setIn(new FileInputStream("input_2.txt"));
+            System.setOut(new PrintStream(new FileOutputStream("output_2.txt")));
+            Scanner sc = new Scanner(System.in);
+
+            List<String> lines = new ArrayList<>();
+            while (sc.hasNextLine()) lines.add(sc.nextLine());
+            sc.close();
+
+            // First pass: collect macro definitions
+            for (int i = 0; i < lines.size(); i++) {
+                String line = lines.get(i).trim();
+                if (line.startsWith("%macro")) {
+                    String macroName = line.split("\\s+")[1];
+                    int argStart = arguments.size();
+                    int defStart = macroBody.size();
+
+                    macros.add(new TypeDef(macroName, defStart, argStart));
+
+                    for (String p : lines.get(++i).split("\\s+")) {
+                        if (p.contains("=")) {
+                            String[] a = p.split("=");
+                            arguments.add(new Argument(a[0], a[1]));
+                        } else if (!p.isEmpty()) {
+                            arguments.add(new Argument(p, ""));
+                        }
+                    }
+
+                    while (!lines.get(++i).contains("MEND")) {
+                        macroBody.add(lines.get(i));
+                    }
+                    macroBody.add("MEND");
+                }
+            }
+
+            // Second pass: expand macros
+            for (String line : lines) {
+                if (line.startsWith("%macro") || line.contains("MEND")) continue;
+                String[] parts = line.split("\\s+");
+                TypeDef macro = macros.stream()
+                        .filter(m -> m.name.equals(parts[0]))
+                        .findFirst().orElse(null);
+
+                if (macro != null) {
+                    List<String> callArgs = new ArrayList<>();
+                    for (int i = 1; i < parts.length; i++)
+                        callArgs.add(parts[i].replace(",", ""));
+                    expandMacro(macro, callArgs);
+                } else {
+                    System.out.println(line);
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    private static void expandMacro(TypeDef macro, List<String> callArgs) {
+        int i = macro.defIndex;
+        while (!macroBody.get(i).contains("MEND")) {
+            String line = macroBody.get(i++);
+            for (int j = 0; j < callArgs.size(); j++) {
+                String formal = arguments.get(macro.argIndex + j).name;
+                line = line.replace(formal, callArgs.get(j));
+            }
+            System.out.println(line);
+        }
+    }
+}

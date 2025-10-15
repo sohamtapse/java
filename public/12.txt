@@ -1,0 +1,193 @@
+ASSIGNMENT 12 
+13324
+
+#SORCE CODE :
+
+import pymongo
+
+def connect_to_mongodb():
+    client = pymongo.MongoClient("mongodb://localhost:27017/")
+    db = client["programmer"]
+    collection = db["student"]
+    return collection
+
+def create_document(collection):
+    rollno = int(input("Enter roll number: "))
+    name = input("Enter name: ")
+    info = {'rollno': rollno, 'name': name}
+    collection.insert_one(info)
+    print("Document inserted.")
+
+def read_documents(collection):
+    documents = collection.find()
+    print("Documents in the collection:")
+    for info in documents:
+        print(info)
+
+def update_document(collection):
+    rollno = int(input("Enter roll number of the document to update: "))
+    new_name = input("Enter new name: ")
+    result = collection.update_one({'rollno': rollno}, {'$set': {'name': new_name}})
+    if result.modified_count > 0:
+        print("Document updated.")
+    else:
+        print("No document found with that roll number.")
+
+def delete_document(collection):
+    rollno = int(input("Enter roll number of the document to delete: "))
+    result = collection.delete_one({'rollno': rollno})
+    if result.deleted_count > 0:
+        print("Document deleted.")
+    else:
+        print("No document found with that roll number.")
+
+def main():
+    collection = connect_to_mongodb()
+    
+    while True:
+        print("\nMenu:")
+        print("1. Create Document")
+        print("2. Read Documents")
+        print("3. Update Document")
+        print("4. Delete Document")
+        print("5. Exit")
+        
+        choice = input("Enter your choice (1-5): ")
+        
+        if choice == '1':
+            create_document(collection)
+        elif choice == '2':
+            read_documents(collection)
+        elif choice == '3':
+            update_document(collection)
+        elif choice == '4':
+            delete_document(collection)
+        elif choice == '5':
+            print("Exiting the program.")
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
+
+
+#OUTPUT:-
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  1
+Enter roll number:  101
+Enter name:  niraj
+Document inserted.
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  1
+Enter roll number:  102
+Enter name:  rakesh
+Document inserted.
+
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  2
+Documents in the collection:
+{'_id': ObjectId('670f4fa2314e6472ea4e85ed'), 'rollno': 101, 'name': 'niraj'}
+{'_id': ObjectId('670f4fa2314e6472ea4e85ef'), 'rollno': 102, 'name': 'rakesh'}
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  3
+Enter roll number of the document to update:  102
+Enter new name: shivam
+Document updated.
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  2
+Documents in the collection:
+{'_id': ObjectId('670f4fa2314e6472ea4e85ed'), 'rollno': 111, 'name': 'niraj'}
+{'_id': ObjectId('670f4fa2314e6472ea4e85ef'), 'rollno': 112, 'name': 'shivam'}
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  4
+Enter roll number of the document to delete:  102
+Document deleted.
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5):  2
+Documents in the collection:
+{'_id': ObjectId('670f4fa2314e6472ea4e85ed'), 'rollno': 101, 'name': 'niraj'}
+
+Menu:
+1. Create Document
+2. Read Documents
+3. Update Document
+4. Delete Document
+5. Exit
+Enter your choice (1-5): 
+
+
+#MongoDB Shell OutPut:-
+
+>use developer
+<switched to db developer
+>db["STUDENT"].find();
+<{
+  _id: ObjectId('670f4fa2314e6472ea4e85ed'),
+  rollno: 101,
+  name: 'niraj'
+}
+{
+  _id: ObjectId('670f4fa2314e6472ea4e85ef'),
+  rollno: 102,
+  name: 'shiavm'
+}
+>db["STUDENT"].find();
+<{
+  _id: ObjectId('670f4fa2314e6472ea4e85ed'),
+  rollno: 101,
+  name: 'niraj'
+}
+{
+  _id: ObjectId('670f4fa2314e6472ea4e85ef'),
+  rollno: 102,
+  name: 'shivam'
+}
+>db["STUDENT"].find();
+<{
+  _id: ObjectId('670f4fa2314e6472ea4e85ed'),
+  rollno: 101,
+  name: 'niraj'
+}

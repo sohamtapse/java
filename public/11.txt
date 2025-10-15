@@ -1,0 +1,57 @@
+db.createCollection("bank");
+db.bank.insertMany([
+    { branch: "PUNE", balance: 60000 },
+    { branch: "MUMBAI", balance: 20000 },
+    { branch: "GOA", balance: 10000 },
+    { branch: "PUNE", balance: 7000 },
+    { branch: "MUMBAI", balance: 25000 },
+    { branch: "GOA", balance: 10000 },
+    { branch: "KOLHAPUR", balance: 80000 }
+]);
+{
+  acknowledged: true,
+  insertedIds: {
+    '0': ObjectId('670e191c8162dfe803b80b74'),
+    '1': ObjectId('670e191c8162dfe803b80b75'),
+    '2': ObjectId('670e191c8162dfe803b80b76'),
+    '3': ObjectId('670e191c8162dfe803b80b77'),
+    '4': ObjectId('670e191c8162dfe803b80b78'),
+    '5': ObjectId('670e191c8162dfe803b80b79'),
+    '6': ObjectId('670e191c8162dfe803b80b7a')
+  }
+}
+const mapFunction = function() {
+    emit(this.branch, this.balance);
+};
+const reduceFunction = function(key, values) {
+    return Array.sum(values);
+};
+db.bank.mapReduce(
+    mapFunction,
+    reduceFunction,
+    {
+        out: "branch_balance" 
+    }
+);
+DeprecationWarning: Collection.mapReduce() is deprecated. Use an aggregation instead.
+See https://docs.mongodb.com/manual/core/map-reduce for details.
+{ result: 'branch_balance', ok: 1 }
+db.branch_balance.find();
+{
+  _id: 'PUNE',
+  value: 67000
+}
+{
+  _id: 'MUMBAI',
+  value: 55000
+}
+{
+  _id: 'KOLHAPUR',
+  value: 80000
+}
+{
+  _id: 'GOA',
+  value: 20000
+}
+
+         

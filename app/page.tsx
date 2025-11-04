@@ -29,12 +29,20 @@ export default function Home() {
           >
             Macro.txt
           </a>
+
           <a
             href="/input_2.txt"
             download
             className="px-6 py-3 bg-black text-white hover:bg-white hover:text-black rounded shadow-md transition w-full sm:w-auto text-center"
           >
             input_2.txt
+          </a>
+          <a
+            href="/SimpleScheduling.txt"
+            download
+            className="px-6 py-3 bg-black text-white hover:bg-white hover:text-black rounded shadow-md transition w-full sm:w-auto text-center"
+          >
+            SimpleScheduling.txt
           </a>
         </div>
       </div>

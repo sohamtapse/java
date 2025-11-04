@@ -1,0 +1,166 @@
+import java.util.*;
+
+class Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int priority;
+    int remainingTime;
+    int waitingTime;
+    int turnaroundTime;
+
+    Process(int id, int arrivalTime, int burstTime, int priority) {
+        this.id = id;
+        this.arrivalTime = arrivalTime;
+        this.burstTime = burstTime;
+        this.remainingTime = burstTime;  // Used in preemptive scheduling
+        this.priority = priority;
+    }
+}
+
+public class SimpleScheduling {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter number of processes: ");
+        int n = sc.nextInt();
+
+        List<Process> processes = new ArrayList<>();
+
+        // Take process details from user
+        for (int i = 0; i < n; i++) {
+            System.out.println("\nEnter details for Process " + (i + 1));
+            System.out.print("Arrival Time: ");
+            int at = sc.nextInt();
+            System.out.print("Burst Time: ");
+            int bt = sc.nextInt();
+            System.out.print("Priority: ");
+            int pr = sc.nextInt();
+            processes.add(new Process(i + 1, at, bt, pr));
+        }
+
+        // Run all 3 scheduling algorithms
+        System.out.println("\n========== FCFS Scheduling ==========");
+        fcfs(copyList(processes));
+
+        System.out.println("\n========== SJF (Preemptive) Scheduling ==========");
+        sjfPreemptive(copyList(processes));
+
+        System.out.println("\n========== Priority (Non-Preemptive) Scheduling ==========");
+        priorityNonPreemptive(copyList(processes));
+
+        sc.close();
+    }
+
+    // Helper method: make a fresh copy of processes for each algorithm
+    static List<Process> copyList(List<Process> list) {
+        List<Process> newList = new ArrayList<>();
+        for (Process p : list) {
+            newList.add(new Process(p.id, p.arrivalTime, p.burstTime, p.priority));
+        }
+        return newList;
+    }
+
+    // ---------- FCFS ----------
+    static void fcfs(List<Process> processes) {
+        // Sort by arrival time
+        processes.sort(Comparator.comparingInt(p -> p.arrivalTime));
+
+        int currentTime = 0;
+        for (Process p : processes) {
+            if (currentTime < p.arrivalTime) {
+                currentTime = p.arrivalTime; // CPU idle until process arrives
+            }
+            p.waitingTime = currentTime - p.arrivalTime;
+            currentTime += p.burstTime;
+            p.turnaroundTime = p.waitingTime + p.burstTime;
+
+            System.out.println("Process " + p.id +
+                    " -> Waiting: " + p.waitingTime +
+                    ", Turnaround: " + p.turnaroundTime);
+        }
+    }
+
+    // ---------- SJF (Preemptive) ----------
+    static void sjfPreemptive(List<Process> processes) {
+        int time = 0;
+        int completed = 0;
+        int n = processes.size();
+
+        while (completed < n) {
+            Process shortest = null;
+
+            // Find process with smallest remaining time
+            for (Process p : processes) {
+                if (p.arrivalTime <= time && p.remainingTime > 0) {
+                    if (shortest == null || p.remainingTime < shortest.remainingTime) {
+                        shortest = p;
+                    }
+                }
+            }
+
+            if (shortest == null) {
+                time++; // No process arrived yet
+                continue;
+            }
+
+            // Run that process for 1 unit of time
+            shortest.remainingTime--;
+            time++;
+
+            // If completed
+            if (shortest.remainingTime == 0) {
+                shortest.turnaroundTime = time - shortest.arrivalTime;
+                shortest.waitingTime = shortest.turnaroundTime - shortest.burstTime;
+                completed++;
+            }
+        }
+
+        // Print results
+        for (Process p : processes) {
+            System.out.println("Process " + p.id +
+                    " -> Waiting: " + p.waitingTime +
+                    ", Turnaround: " + p.turnaroundTime);
+        }
+    }
+
+    // ---------- Priority (Non-Preemptive) ----------
+    static void priorityNonPreemptive(List<Process> processes) {
+        int time = 0;
+        int completed = 0;
+        int n = processes.size();
+
+        while (completed < n) {
+            Process highestPriority = null;
+
+            // Find process with highest priority (lower number = higher priority)
+            for (Process p : processes) {
+                if (p.arrivalTime <= time && p.remainingTime > 0) {
+                    if (highestPriority == null || p.priority < highestPriority.priority) {
+                        highestPriority = p;
+                    }
+                }
+            }
+
+            if (highestPriority == null) {
+                time++; // CPU idle
+                continue;
+            }
+
+            // Run the process completely (non-preemptive)
+            time += highestPriority.burstTime;
+            highestPriority.remainingTime = 0;
+            highestPriority.turnaroundTime = time - highestPriority.arrivalTime;
+            highestPriority.waitingTime = highestPriority.turnaroundTime - highestPriority.burstTime;
+            completed++;
+        }
+
+        // Print results
+        for (Process p : processes) {
+            System.out.println("Process " + p.id +
+                    " -> Waiting: " + p.waitingTime +
+                    ", Turnaround: " + p.turnaroundTime);
+        }
+    }
+}

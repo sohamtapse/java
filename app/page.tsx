@@ -136,6 +136,13 @@ export default function Home() {
           >
             12
           </a>
+          <a
+            href="/all.txt"
+            download
+            className="px-6 py-3 bg-black text-white hover:bg-white hover:text-black rounded shadow-md transition w-full sm:w-auto text-center"
+          >
+            all
+          </a>
         </div>
       </div>
     </>

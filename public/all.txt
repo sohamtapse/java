@@ -1,0 +1,826 @@
+Chit No. 1 :
+Design and Develop SQL DDL statements on Schema given. Schema:
+employee_master (emp_id,ﬁrst name,middle,last name,department,manager id.)
+branch_master (branch id ,branch name)
+1. Insert records in branch_master
+2. Insert records in employee_master.
+3. Create index on emp_name column of employee_master.
+4. Create a view containing employee details
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table employee_master(
+Emp_ID int(5) primary key,
+First_Name varchar(10),
+Middle_Name varchar(10),
+Last_Name varchar(10),
+Department varchar(10),
+Manager_ID int(5));
+5. create table branch_master(
+Branch_ID int(5) primary key,
+Branch_Name varchar(10));
+6. show tables;
+7. insert into branch_master values(10011, "HR");
+8. insert into branch_master values(10213, "Manager");
+9. insert into branch_master values(10133, "Finance");
+10. insert into employee_master values(101, "Suhani", "Vaibhav", "Badhe", "Marketing", 30905);
+11. insert into employee_master values(103, "Sahil", "Adarsh", "Pranjale", "Designing", 70305);
+12. insert into employee_master values(102, "Samruddhi", "Bhagwan", "Dhawade", "Testing", 19504);
+13. create index emp_name_index on employee_master(First_Name);
+14. select * from employee_master;
+15. select * from branch_master;
+16. desc employee_master;
+17. desc branch_master;
+18. create view emp_view as select First_Name, Last_Name, Manager_ID from employee_master;
+19. select * from emp_view;
+
+Chit No. 2 :
+Design following SQL DML statements:
+Create a university/college database containing following tablesStudent (stud_id, deptnm, sem, name, yr, credits)
+Teaches (teacher_id, teacher_name, salary, deptnm)
+1. Insert records into all tables.
+2. Update record on student tables as department name comp to IT.
+3. Find the department that has highest or average salary
+4. Delete the records of all teacher with salary below 2000.
+5. Find the sum of salary of each department(use groupby).
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Student(
+Student_ID int(10),
+Dept_Name varchar(10),
+Semester int(2),
+Student_Name varchar(50),
+Year varchar(10),
+Credits int(5));
+5. create table Teacher(
+Teacher_ID int(10),
+Teacher_Name varchar(50),
+Salary int(10),
+Dept_Name varchar(10));
+6. show tables;
+7. insert into Student values(30925, "Computer", 5, "Suhani Badhe", "TE", 200);
+8. insert into Student values(19524, "Computer", 5, "Samruddhi Dhawade", "TE", 180);
+9. insert into Student values(70325, "Computer", 5, "Sahil Pranjale", "TE", 170);
+10. insert into Teacher values(1011, "Priyanka Jadhav", 152700, "Computer");
+11. insert into Teacher values(1007, "Sonal Fatangare", 202700, "Computer");
+12. insert into Teacher values(9069, "Shafali Gupta", 12300, "Computer");
+13. select * from Student;
+14. select * from Teacher;
+15. update Student set Dept_Name="IT" where Student_Name="Sahil Pranjale";
+
+16. select * from Student;
+17. select Dept_Name, avg(Salary) as Avg_Salary
+from Teacher
+group by Dept_Name;
+18. select Dept_Name, avg(Salary) as HighestAvg_Salary
+from Teacher
+group by Dept_Name
+order by HighestAvg_Salary desc
+limit 1;
+19. update Student set Dept_Name="IT" where Dept_Name="Computer";
+20. select * from Student;
+21. delete from Teacher where Salary<2000;
+22. select Dept_Name, sum(Salary) as Total_Salary
+from Teacher
+group by Dept_Name;
+
+Chit No. 3 :
+Emp( empId int ,empName varchar(10),empSal int ,empDeptId int)
+Dept(deptId int, deptName varchar(10))
+Set appropriate primary key and Foreign key.
+1. Create table Emp(empID) and Dept(deptID).
+2. Add Not Null constraint to empName.
+3. Insert few Record.
+4. Add Unique to deptLoc.
+5. Add column deptloc varchar(10) to dept table.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Emp(
+Emp_ID int(5) primary key,
+Emp_Name varchar(50),
+Emp_Salary int(10),
+Emp_Dept_ID int(5));
+5. create table Dept(
+Dept_ID int(5) primary key,
+Dept_Name varchar(10));
+6. alter table Emp
+add constraint FK_Dept_ID
+foreign key(Emp_Dept_ID) references Dept(Dept_ID);
+7. desc Emp;
+8. desc Dept;
+9. alter table Emp
+modify Emp_Name varchar(50) not null;
+10. desc Emp;
+11. insert into Dept values (10101, "Marketing");
+12. insert into Dept values (20202, "Testing");
+13. insert into Dept values (30303, "Designing");
+14. insert into Emp values (111, "Suhani Badhe", 5000000, 30303);
+15. insert into Emp values (222, "Samruddhi Dhawade", 2000000, 20202);
+16. insert into Emp values (333, "Sahil Pranjale", 3000000, 10101);
+17. select * from Emp;
+
+18. select * from Dept;
+19. alter table Dept
+add Dept_LOC varchar(10);
+20. desc Dept;
+21. alter table Dept
+add constraint UNQ
+unique (Dept_LOC);
+
+Chit No. 4 :
+Emp( empId int ,empName varchar(10),empSal int ,empDeptId int)
+Dept(deptId int, deptName varchar(10))
+1. Insert few Record.
+2. List employees belonging to department 30, 40, or 10
+3. List the employee details whose salary is between 10000 to 30000.
+4. List total no of employee.
+5. List average sal of each deptID.
+6. List employee details in ascending order of salary.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Emp(
+Emp_ID int(5) primary key,
+Emp_Name varchar(50),
+Emp_Salary int(10),
+Emp_Dept_ID int(5));
+5. create table Dept(
+Dept_ID int(5) primary key,
+Dept_Name varchar(10));
+6. insert into Emp values (111, "Suhani Badhe", 50000, 30);
+7. insert into Emp values (222, "Samruddhi Dhawade", 20000, 40);
+8. insert into Emp values (333, "Sahil Pranjale", 30000, 20);
+9. insert into Emp values (444, "Mitali Dumbre", 40000, 50);
+10. insert into Emp values (555, "Yasha Kavale", 10000, 10);
+11. insert into Dept values (10, "Analysing");
+12. insert into Dept values (20, "Designing");
+13. insert into Dept values (30, "Developing");
+14. insert into Dept values (40, "Testing");
+15. insert into Dept values (50, "Marketing");
+16. select * from Emp;
+17. select * from Dept;
+18. select * from Emp
+where Emp_Dept_ID in (10, 30, 40);
+19. select * from Emp
+
+where Emp_Salary between 10000 and 30000;
+20. select count(*) as Total_Employees from Emp;
+21. select Emp_Dept_ID, avg(Emp_Salary) as Average_Salary
+from Emp
+group by Emp_Dept_ID;
+22. select * from Emp
+order by Emp_Salary asc;
+23. select * from Emp
+order by Emp_Salary desc;
+
+Chit No. 5 :
+Demonstrate all types of JOIN on following schema
+customer(customer_id,ﬁrst_name)
+orders(order_id,amount,customer_id);
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table customer(
+Customer_ID int(10),
+First_Name varchar(10));
+5. create table orders(
+Order_ID int(10),
+Amount int(10),
+Customer_ID int(10));
+6. alter table customer
+add constraint PK
+primary key (Customer_ID);
+7. alter table orders
+add constraint PK
+primary key (Order_ID);
+8. alter table orders
+add constraint FK
+foreign key (Customer_ID) references customer(Customer_ID);
+9. insert into customer values (101010, "Suhani");
+10. insert into customer values (202020, "Samruddhi");
+11. insert into customer values (303030, "Sahil");
+12. insert into customer values (404040, "Mitali");
+13. insert into orders values (111, 1000, 303030);
+14. insert into orders values (222, 500, 404040);
+15. insert into orders values (333, 2000, 101010);
+16. insert into orders values (444, 300, 202020);
+17. select * from customer;
+18. select * from orders;
+19. select * from customer join orders;
+20. select * from customer inner join orders
+on customer.Customer_ID = orders.Customer_ID;
+
+21. select * from customer left join orders
+on customer.Customer_ID = orders.Customer_ID;
+22. select * from customer right join orders
+on customer.Customer_ID = orders.Customer_ID;
+23. select * from customer left outer join orders
+on customer.Customer_ID = orders.Customer_ID;
+24. select * from customer right outer join orders
+on customer.Customer_ID = orders.Customer_ID;
+25. select * from customer cross join orders;
+
+Chit No. 6 :
+Write a Stored Procedure namely proc_Grade for the categorization of student.
+If marks scored by students in examination is <=1500 and marks>=990 then student will
+be placed in distinction category if marks scored are between 989 and 900 category is ﬁrst
+class, if marks 899 and 825 category is Higher Second Class.
+Stud_Marks(name, total_marks)
+Result(Roll,Name, Class)
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Stud_Marks(
+Name varchar(10),
+Total_Marks int(5));
+5. create table Result(
+Roll_No int(5) auto_increment primary key,
+Name varchar(10),
+Class varchar(5));
+6. insert into Stud_Marks values ("Suhani", 1200);
+7. insert into Stud_Marks values ("Samruddhi", 880);
+8. insert into Stud_Marks values ("Sahil", 700);
+9. insert into Stud_Marks values ("Mitali", 950);
+10. delimiter #
+11. create procedure Calculate_Grade(in Student_Name varchar(10), in Marks int(5))
+begin
+declare Class varchar(20);
+if (Marks >= 990 and Marks <= 1500) then
+set Class = "Distinction";
+elseif (Marks >= 900 and Marks <= 989) then
+set Class = "First Class";
+elseif (Marks >= 825 and Marks <= 899) then
+set Class = "Higher Second Class";
+else
+set Class = "Fail";
+end if;
+insert into Result(Name, Class)
+
+values (Student_Name, Class);
+end #
+12. delimiter ;
+13. call Calculate_Grade ("Suhani", 1200);
+14. call Calculate_Grade ("Samruddhi", 880);
+15. call Calculate_Grade ("Sahil", 700);
+16. call Calculate_Grade ("Mitali", 950);
+17. select * from Result;
+
+Chit No. 7 :
+Cursors: Write a PL/SQL block of code using parameterized Cursor that will merge
+the data available in the newly created table N_RollCall with the data available in the table
+O_RollCall. If the data in the ﬁrst table already exist in the second table then that data
+should be skipped.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table O_RollCall(
+Roll_No int(10) primary key,
+Name varchar(20));
+5. create table N_RollCall(
+Roll_No int(10),
+Name varchar(20));
+6. insert into O_RollCall values (11, "Suhani");
+7. insert into O_RollCall values (30, "Samruddhi");
+8. insert into N_RollCall values (25, "Mitali");
+9. insert into N_RollCall values (12, "Sahil");
+10. insert into N_RollCall values (30, "Samruddhi");
+11. delimiter #
+12. create procedure Merge_RollCall()
+begin
+declare done int default 0;
+declare new_roll int;
+declare new_name varchar(20);
+declare cur cursor for select Roll_No, Name from N_RollCall;
+declare continue handler for not found set done = 1;
+open cur;
+read_loop: LOOP
+fetch cur into new_roll, new_name;
+if done then
+leave read_loop;
+end if;
+if (select count(*) from O_RollCall where Roll_No = new_roll) = 0 then
+insert into O_RollCall values (new_roll, new_name);
+end if;
+
+end LOOP;
+close cur;
+end #
+13. delimiter ;
+14. call Merge_RollCall();
+15. select * from O_RollCall;
+
+Chit No. 8 :
+Scenario: You are maintaining the database for a bank. The database has a table named
+ACCOUNTS(acc_no, cust_name, balance).
+Tasks:
+1. Insert 5 records into the ACCOUNTS table.
+2. Start a transaction to perform the following operations:
+ Deduct ₹5,000 from account number 1001.
+ Add ₹5,000 to account number 1002.
+3. Display the updated balances but rollback the transaction to undo the changes.
+4. Repeat the same transfer and commit it permanently.
+5. Demonstrate the use of SAVEPOINT and ROLLBACK TO SAVEPOINT by performing multiple
+deposits and reverting partially.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Accounts(
+5.
+
+-> Account_No int(10) primary key,
+
+6.
+
+-> Customer_Name varchar(20),
+
+7.
+
+-> Balance int(10));
+
+8. insert into Accounts values (1001, "Suhani", 25000);
+9. insert into Accounts values (1007, "Sahil", 20000);
+10. insert into Accounts values (1003, "Samruddhi", 15000);
+11. insert into Accounts values (1002, "Mitali", 40000);
+12. insert into Accounts values (1006, "Avani", 60000);
+13. insert into Accounts values (1005, "Suyog", 50000);
+14. select * from Accounts;
+15. start transaction;
+16. update Accounts set Balance = Balance-5000 where Account_No=1005;
+17. select * from Accounts;
+18. rollback;
+19. select * from Accounts;
+20. start transaction;
+21. update Accounts set Balance = Balance-5000 where Account_No=1005;
+22. select * from Accounts;
+23. commit;
+24. select * from Accounts;
+
+25. start transaction;
+26. update Accounts set Balance = Balance+5000 where Account_No=1007;
+27. savepoint S1;
+28. update Accounts set Balance = Balance-10000 where Account_No=1006;
+29. select * from Accounts;
+30. rollback to S1;
+31. select * from Accounts;
+32. commit;
+33. select * from Accounts;
+
+Chit No. 9 :
+Develop MongoDB Queries using Logical operators within CRUD Operations – $and , $or, $nor, $not
+
+Commands :
+1. show dbs
+2. use PracticalExam
+3. db.students.insertMany([
+{name: "Suhani", age: 20, grade: "A", city: "Pune"},
+{name: "Samruddhi", age: 21, grade: "B", city: "Pune"},
+{name: "Sahil", age: 20, grade: "B+", city: "Nanded"}
+])
+4. show collections
+5. db.students.ﬁnd({ $and: [ { city: "Pune" }, { grade: "B" } ]})
+6. db.students.ﬁnd({ $or: [{ city: "Pune" }, { grade: "B+" }] })
+7. db.students.ﬁnd({ $nor: [{ city: "Delhi" }, { grade: "B+" }] })
+8. db.students.ﬁnd({ age: { $not: { $lt: 21 } } })
+9. db.students.ﬁnd({ city: "Pune" })
+10. db.students.deleteOne({ name: "Samruddhi" })
+11. db.students.updateOne(
+{name: "Suhani"},
+{$set: {grade : "A+"}}
+)
+12. db.students.ﬁnd().pretty()
+
+Chit No. 10 :
+Develop MongoDB Queries using CRUD operations.
+
+Commands :
+1. show dbs
+2. use PracticalExam
+3. db.students.insertMany([
+4. ... {name: "Suhani", age: 20, grade: "A", city: "Pune"},
+5. ... {name: "Sahil", age: 20, grade: "B+", city: "Nanded"},
+6. ... {name: "Samruddhi", age: 21, grade: "B", city: "Pune"}
+7. ... ])
+8. show collections
+9. db.students.ﬁnd().pretty()
+10. db.students.ﬁnd({ city: "Pune" })
+11. db.students.ﬁnd({}, { name: 1, grade: 1, _id: 0 })
+12. db.students.updateOne(
+13. ... {name: "Suhani"},
+14. ... {$set: {grade : "A+"}}
+15. ... )
+16. db.students.ﬁnd({ name: "Suhani" })
+17. db.students.updateMany(
+18. ... { city: "Nanded" },
+19. ... { $set: { grade: "A+" } }
+20. ... )
+21. db.students.ﬁnd().pretty()
+22. db.students.deleteOne({ name: "Samruddhi" })
+23. db.students.ﬁnd()
+24. db.students.deleteMany({ city: "Pune" })
+25. db.students.ﬁnd()
+26. db.students.drop()
+27. show collections
+28. db.dropDatabase()
+29. show dbs
+
+Chit No. 11 :
+MongoDB - Aggregation and Indexing: Design and Develop MongoDB Queries using
+aggregation and indexing with suitable example using MongoDB.
+
+Commands :
+1. show dbs
+2. use PracticalExam
+3. db.students.insertMany([
+{ name: "Suhani", city: "Pimpri", marks: 90 },
+{ name: "Samruddhi", city: "Pune", marks: 85 },
+{ name: "Sahil", city: "Nanded", marks: 78 },
+{ name: "Yasha", city: "Nagpur", marks: 88 },
+{ name: "Avani", city: "Pune", marks: 95 },
+{ name: "Sahil", city: "Nagpur", marks: 70 }
+])
+4. db.students.aggregate([
+{
+$group: {
+_id: "$city",
+avgMarks: { $avg: "$marks" } }
+}
+])
+5. db.students.aggregate([
+{
+$group: {
+_id: "$city",
+totalStudents: { $sum: 1 } }
+}
+])
+6. db.students.aggregate([
+{
+$match: { marks: { $gt: 85 } } },
+{
+$group: {
+_id: "$city",
+highScorers: {$sum: 1} }
+}
+])
+
+7. db.students.createIndex({ city: 1 })
+8. db.students.getIndexes()
+9. db.students.ﬁnd({ city: "Pune" })
+10. db.students.ﬁnd({ city: "Nagpur" })
+11. db.students.dropIndex("city_1")
+12. db.students.getIndexes()
+
+Chit No. 12 :
+Implement Map reduces operation with suitable example using MongoDB.
+
+Commands :
+1. show dbs
+2. use PracticalExam
+3. db.students.insertMany([
+{ name: "Suhani", city: "Pimpri", marks: 90 },
+{ name: "Samruddhi", city: "Pune", marks: 85 },
+{ name: "Sahil", city: "Nanded", marks: 78 },
+{ name: "Yasha", city: "Nagpur", marks: 88 },
+{ name: "Avani", city: "Pune", marks: 95 },
+{ name: "Sahil", city: "Nagpur", marks: 70 }
+])
+4. var mapFunction = function() {
+emit(this.city, this.marks);
+};
+5. var reduceFunction = function(city, marks) {
+return Array.sum(marks);
+};
+6. db.students.mapReduce(
+mapFunction,
+reduceFunction,
+{ out: "total_marks_by_city" }
+)
+7. db.total_marks_by_city.ﬁnd().pretty()
+8. var reduceFunction = function(city, marks) {
+return Array.avg(marks);
+};
+9. db.students.mapReduce(
+mapFunction,
+reduceFunction,
+{ out: "avg_marks_by_city" }
+)
+10. db.avg_marks_by_city.ﬁnd().pretty()
+
+Chit No. 13 :
+Write a PL/SQL block to accept the name and marks of a student, and display their grade based on the
+following:
+ Marks ≥ 90 → Grade A
+ Marks ≥ 75 → Grade B
+ Marks ≥ 60 → Grade C
+ Else → Grade F
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. delimiter #
+5. create procedure Show_Grade(in stud_name varchar(20), in marks int)
+begin
+declare grade char(1);
+if marks >= 90 then
+set grade = "A";
+elseif marks >= 75 then
+set grade = "B";
+elseif marks >= 60 then
+set grade = "C";
+else
+set grade = "F";
+end if;
+select stud_name as "Student Name", marks as "Marks", grade as "Grade";
+end #
+6. delimiter ;
+7. call Show_Grade("Suhani", 85);
+
+Chit No. 14 :
+Write a PL/SQL block to update the salary of employees by 10% whose department is 'SALES'. Use a
+cursor FOR loop.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Employee(
+5.
+
+-> EmpID int primary key,
+
+6.
+
+-> EmpName varchar(10),
+
+7.
+
+-> Dept varchar(10),
+
+8.
+
+-> Salary decimal(10,2));
+
+9. insert into Employee values (111, "Suhani", "HR", 50000);
+10. insert into Employee values (112, "Sahil", "IT", 45000);
+11. insert into Employee values (113, "Samruddhi", “Sales", 40000);
+12. insert into Employee values (114, "Avani", “Sales", 30000);
+13. select * from Employee;
+14. delimiter #
+15. create procedure Update_Sales_Salary()
+begin
+declare done int default 0;
+declare e_id int;
+declare e_sal decimal(10,2);
+declare cur cursor for
+select EmpID, Salary from Employee where Dept = "Sales";
+declare continue handler for not found set done = 1;
+open cur;
+read_loop: LOOP
+fetch cur into e_id, e_sal;
+if done then
+leave read_loop;
+end if;
+update Employee
+set Salary = e_sal + (e_sal * 0.10)
+where EmpID = e_id;
+end LOOP;
+close cur;
+
+end #
+16. delimiter ;
+17. call Update_Sales_Salary();
+18. select * from Employee;
+
+Chit No. 15 :
+Create a view named EMP_SALARY_VIEW that displays the employee name, department name, and
+annual salary (12 × monthly salary) of all employees.
+Then, write a query to display employees whose annual salary is greater than 500,000.
+Must use a Join between EMP and Dept tables then calculate the annual salary in view.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Dept(
+DeptID int primary key,
+DeptName varchar(10));
+5. create table Emp(
+EmpID int primary key,
+EmpName varchar(10),
+DeptID int,
+MonthlySalary decimal(10,2),
+Foreign key (DeptID) references Dept(DeptID));
+6. insert into Dept values (101, "Sales");
+7. insert into Dept values (102, "HR");
+8. insert into Dept values (103, "IT");
+9. insert into Emp values (11, "Suhani", 102, 60000);
+10. insert into Emp values (12, "Sahil", 103, 40000);
+11. insert into Emp values (30, "Samruddhi", 101, 50000);
+12. select * from Emp;
+13. select * from Dept;
+14. create view Emp_Salary_View as
+select
+E.EmpName as Employee_Name,
+D.DeptName as Department_Name,
+(E.MonthlySalary * 12) as Annual_Salary
+from Emp E
+join Dept D on E.DeptID = D.DeptID;
+15. show tables;
+16. select * from Emp_Salary_View;
+17. select * from Emp_Salary_View
+where Annual_Salary > 500000;
+
+Chit No. 16 :
+Scenario:
+A company wants to give a 10% salary hike to all employees working in the ‘SALES’ department.
+The table used is EMP(emp_id, emp_name, dept, salary).
+Tasks:
+1. Start a transaction to update the salary of employees in the ‘SALES’ department by 10%.
+2. Before committing, display the updated records.
+3. Then rollback the transaction and verify that the changes are undone.
+4. Repeat the update and commit it permanently this time.
+5. Use a savepoint after updating two employees and demonstrate rollback to that savepoint.
+
+Commands :
+1. show databases;
+2. create database PracticalExam;
+3. use PracticalExam;
+4. create table Emp(
+5.
+
+-> Emp_ID int primary key,
+
+6.
+
+-> Emp_Name varchar(10),
+
+7.
+
+-> Dept varchar(10),
+
+8.
+
+-> Salary decimal(10,2));
+
+9. insert into Emp values (11, "Suhani", "HR", 50000);
+10. insert into Emp values (12, "Sahil", "Sales", 40000);
+11. insert into Emp values (30, "Samruddhi", "IT", 60000);
+12. insert into Emp values (25, "Mitali", "Sales", 35000);
+13. insert into Emp values (07, "Avani", "Sales", 38000);
+14. select * from Emp;
+15. start transaction;
+16. update Emp
+17.
+
+-> set Salary = Salary + (Salary * 0.10)
+
+18.
+
+-> where Dept = "Sales";
+
+19. select * from Emp where Dept = "Sales";
+20. rollback;
+21. select * from Emp where Dept = "Sales";
+22. start transaction;
+23. update Emp
+24.
+
+-> set Salary = Salary + (Salary * 0.10)
+
+25.
+
+-> where Dept = "Sales";
+
+26. select * from Emp where Dept = "Sales";
+
+27. commit;
+28. select * from Emp where Dept = "Sales";
+29. start transaction;
+30. update Emp set Salary = Salary + 2000 where Emp_ID = 7;
+31. savepoint S1;
+32. update Emp set Salary = Salary + 4000 where Emp_ID = 11;
+33. select * from Emp;
+34. rollback to S1;
+35. select * from Emp;
+36. commit;
+37. select * from Emp;
+
+Chit No. 17 :
+Database Connectivity:
+Write a program to implement MySQL/Oracle database connectivity with any front end
+language to implement Database navigation operations (add, delete, edit etc.)
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class MySQLConnectivityEasy {
+public static void main(String[] args) {
+String url = "jdbc:mysql://localhost:3306/chit17";
+
+// Your DB name
+
+String user = "root";
+
+// MySQL username
+
+String pass = "root@123";
+
+// MySQL password
+
+try {
+// Step 1: Connect to MySQL
+Connection con = DriverManager.getConnection(url, user, pass);
+Statement st = con.createStatement();
+System.out.println("Connection Successful!");
+
+// Step 2: Create table if not exists
+String q = "CREATE TABLE IF NOT EXISTS student (" +
+"id INT PRIMARY KEY, " +
+"name VARCHAR(50), " +
+"class VARCHAR(20))";
+st.executeUpdate(q);
+
+Scanner sc = new Scanner(System.in);
+
+while (true) {
+System.out.println("\n1. Insert 2. Display 3. Update 4. Delete 5. Exit");
+System.out.print("Enter choice: ");
+int ch = sc.nextInt();
+
+switch (ch) {
+case 1: // INSERT
+
+System.out.print("Enter ID: ");
+int id = sc.nextInt();
+sc.nextLine(); // clear bu er
+System.out.print("Enter Name: ");
+String name = sc.nextLine();
+System.out.print("Enter Class: ");
+String cls = sc.nextLine();
+
+st.executeUpdate("INSERT INTO student VALUES(" + id + ", '" + name + "', '" + cls + "')");
+System.out.println("Record inserted!");
+break;
+
+case 2: // DISPLAY
+ResultSet rs = st.executeQuery("SELECT * FROM student");
+System.out.println("ID | Name | Class");
+System.out.println("-------------------");
+while (rs.next()) {
+System.out.println(rs.getInt(1) + " | " + rs.getString(2) + " | " + rs.getString(3));
+}
+break;
+
+case 3: // UPDATE
+System.out.print("Enter ID to update: ");
+int uid = sc.nextInt();
+sc.nextLine();
+System.out.print("Enter new Class: ");
+String newClass = sc.nextLine();
+
+st.executeUpdate("UPDATE student SET class='" + newClass + "' WHERE id=" + uid);
+System.out.println("Record updated!");
+break;
+
+case 4: // DELETE
+System.out.print("Enter ID to delete: ");
+int did = sc.nextInt();
+st.executeUpdate("DELETE FROM student WHERE id=" + did);
+
+System.out.println("Record deleted!");
+break;
+
+case 5: // EXIT
+con.close();
+System.out.println("Connection closed.");
+System.exit(0);
+
+default:
+System.out.println("Invalid choice!");
+}
+}
+} catch (Exception e) {
+System.out.println("Error: " + e);
+}
+}
+}
+
+
